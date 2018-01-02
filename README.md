@@ -1,6 +1,21 @@
 # lua-docx-xml-cleaner
 Clean XML tag in docx file created by Ms Word using Libreoffice
 
+# Usage
+
+```
+local dc = require('docx-cleaner')
+local result, err = dc:clean_xml('file_cover.docx', './tmp/')
+
+```
+
+# API
+
+#### clean\_xml(docx\_tpl, output\_file)
+- docx\_tpl _string_ docx full path
+- output\_file _string_  output docx file path
+- return output\_file\_path, err message
+
 # Installation
 
 ```
