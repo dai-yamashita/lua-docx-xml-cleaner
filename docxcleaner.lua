@@ -53,3 +53,5 @@ function m.file_exists(filename)
   if not lfs.attributes(filename) then return false end
   return true
 end
+
+return m
