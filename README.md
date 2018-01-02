@@ -5,9 +5,7 @@ Clean XML tag in docx file created by Ms Word using Libreoffice
 
 ```
 #aptitude install libreoffice-writer libreoffice-base libzip-dev libreoffice-java-common
-#luarocks install --server=http://luarocks.org/dev lua-zip
 #luarocks install lua-resty-exec
-#luarocks install lua-docx
 ```
 
 We use non blocking `sockexec` to offload the task of generating a cleaner XML docx.
