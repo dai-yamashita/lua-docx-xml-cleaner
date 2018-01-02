@@ -3,7 +3,6 @@
 
 local lfs = require 'lfs'
 local exec = require 'resty.exec'
-local sock_file = '/home/rogon/tmp/exec.sock' 
 
 local m = {}
 m.__index = m
