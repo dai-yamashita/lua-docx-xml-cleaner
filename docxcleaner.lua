@@ -3,6 +3,7 @@
 
 local lfs = require 'lfs'
 local exec = require 'resty.exec'
+local i = require 'inspect'
 
 local m = {}
 m.__index = m
