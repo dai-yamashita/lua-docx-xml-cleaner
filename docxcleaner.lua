@@ -11,7 +11,10 @@ m.__index = m
 function m.new(tmp_dir, sock_file_path)
   local self = setmetatable({}, m)
   self.tmp_dir = tmp_dir
+  self.sock_file = sock_file_path
   if not self.tmp_dir then error("tmp_dir is missing " .. i(self.tmp_dir)) end
+  if not sock_file_path then error("Missing required sock file path") end
+  if not m.file_writeable(tmp_dir) then error(self.tmp_dir .. " not writeable") end
   return self
 end
 
@@ -21,13 +24,16 @@ end
 function m.clean_xml(self, input_docx)
   if not input_docx then error("Missing input file " .. i(input_docx)) end
 
-  local prog = exec.new(sock_file)
+  local prog, err = exec.new(self.sock_file)
+  if not prog then error(err) end
+
   local cmd  = string.format('/usr/bin/libreoffice --headless --convert-to docx:"MS Word 2007 XML" --outdir %s %q', self.tmp_dir, input_docx)
   local res, err = prog('/bin/bash', '-c', cmd);
-  if res and string.find(res.stdout, "using filter") then 
-    return true 
+  ngx.log(ngx.ERR, err, i(res) .. " " ..  input_docx .. " " .. cmd)
+  if res and string.find(res.stderr, "Error") then 
+    error("Failed to generate a clean docx file: " ..  i(res.stderr))  
   else
-    error("Failed to generate a clean docx file: " .. cmd .. i(res))  
+    return true 
   end
 end
 
@@ -46,6 +52,20 @@ function m.file_exists(filename)
   if type(filename)~="string" then return false end
   if not lfs.attributes(filename) then return false end
   return true
+end
+
+-- make file writeable
+function m.file_set_writeable(file)
+  return os.execute('chmod +w "' .. file .. '"')
+end
+
+-- check if directory/file writeable
+function m.file_writeable(file)
+  if not m.file_exists(file) then return false end
+  local stat = lfs.attributes(file)
+  if not stat then error(file .. "do not exists") end
+  local perm = string.sub(stat.permissions, 8, 8)
+  return perm == 'w'
 end
 
 return m
