@@ -24,13 +24,24 @@ end
 function m.clean_xml(self, input_docx)
   if not input_docx then error("Missing input file " .. i(input_docx)) end
 
-  local prog, err = exec.new(self.sock_file)
+  local prog = exec.new(self.sock_file)
   if not prog then error(err) end
 
-  local cmd  = string.format('/usr/bin/libreoffice --headless --convert-to docx:"MS Word 2007 XML" --outdir %s %q', self.tmp_dir, input_docx)
-  local res, err = prog('/bin/bash', '-c', cmd);
-  ngx.log(ngx.ERR, err, i(res) .. " " ..  input_docx .. " " .. cmd)
-  if res and string.find(res.stderr, "Error") then 
+  prog.argv = {
+    '/usr/bin/libreoffice',
+    '--headless',
+    '--convert-to',
+    'docx:"MS Word 2007 XML"',
+    '--outdir',
+    self.tmp_dir,
+    input_docx
+  }
+
+  --local cmd  = string.format('/usr/bin/libreoffice --headless --convert-to docx:"MS Word 2007 XML" --outdir %s %q', self.tmp_dir, input_docx)
+  --local res, err = prog('/bin/bash', '', cmd);
+  local res, err = prog()
+  ngx.log(ngx.ERR, err, i(res) .. " " ..  input_docx)
+  if res and string.find(res.stderr, "Error") or res.exitcode > 0  then 
     error("Failed to generate a clean docx file: " ..  i(res.stderr))  
   else
     return true 

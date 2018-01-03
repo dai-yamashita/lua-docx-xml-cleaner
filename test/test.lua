@@ -34,7 +34,7 @@ describe('Docx', function()
   end)
 
   it('Output docx using libreoffice', function()
-    local res = doc:clean_xml(lfs.currentdir() .. '/test/doc test.docx') 
+    local res = doc:clean_xml(lfs.currentdir() .. '/test/testdoc.docx') 
     assert.are.equal(res, true)
   end) 
 
